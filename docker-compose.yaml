@@ -1,0 +1,62 @@
+version: "3.3"
+
+services:
+  mongo-database:
+    image: mongo
+    restart: always
+    container_name: mongo
+    ports: 
+      - 27017:27017
+
+  user-appointme-api:
+    restart: always
+    build:
+      context: ./2-appointme-api
+      dockerfile: Dockerfile
+    container_name: user-api
+    #depends_on:
+    # - mongo
+    ports:
+      - 5000:5000 
+    environment:
+      APP_PORT: ${APP_PORT}
+      DB_CONNECTION_URL: ${DB_CONNECTION_URL}
+      DATABASE_NAME: ${DATABASE_NAME}
+  user-ui:
+    restart: always
+    build:
+      context: ./3-appointme-ui
+      dockerfile: Dockerfile
+    container_name: user-ui
+    ports:
+      - 3000:3000
+    environment:
+      REACT_APP_HI: ${REACT_APP_HI}
+      REACT_APP_API_HOST: ${REACT_APP_API_HOST}
+      REACT_APP_API_PORT: ${REACT_APP_API_PORT}
+  admin-api:
+    restart: always
+    build:
+      context: ./4-appointme-admin-api
+      dockerfile: Dockerfile
+    container_name: admin-api
+    ports:
+      - 5050:5050
+   # depends_on:
+   #   - mongo
+    environment:
+      DB_CONNECTION_URL: ${DB_CONNECTION_URL}
+      DATABASE_NAME: ${DATABASE_NAME}
+  admin-ui:
+    restart: always
+    build:
+      context: ./5-appointme-admin-ui
+      dockerfile: Dockerfile
+    container_name: admin-ui
+    ports:
+      - 3001:3000
+    environment:
+      REACT_APP_HI: ${REACT_APP_HI}
+      REACT_APP_API_HOST: ${REACT_APP_API_HOST}
+      REACT_APP_API_PORT: ${REACT_APP_API_PORT}
+  
